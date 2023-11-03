@@ -16,7 +16,7 @@ class CalculaGanador:
                 data.append( fila)
         return data
 
-    def calcularvotos(self, data):
+    def calcularvotosporcandidato(self, data):
         votosxcandidato = {}
         for fila in data:
             if not fila[4] in votosxcandidato:
@@ -24,16 +24,31 @@ class CalculaGanador:
             if fila[5] == '1':
                 votosxcandidato[fila[4]] = votosxcandidato[fila[4]] + 1
         return votosxcandidato
+    def verificardni(self, data):
+        total=0
+        for fila in data:
+            if len(fila[3])==8:
+                total+=1
+        return total
+
     
     def calculaganador(self,data):
+        votos = sorted(data.items(), key=lambda x: x[1], reverse=True)
+        votos= votos[:2]
+        for candidato in votos:
+            porcentaje = self.verificardni(data)
+            if votos[0][1] > 0.5*porcentaje:
+                return [votos[0][0]]
+            elif votos[0][1] == 0.5*porcentaje and votos[1][1]== 0.5*porcentaje:
+                return [votos[0][0]]
+            else:
+                return [votos[0][0],votos[1][0]]
+            
+
+    
 
 
 c = CalculaGanador()
-#c.calcularvotos(c.leerdatos())
-datatest = [
-['Áncash', 'Asunción', 'Acochaca', '40810062', 'Eddie Hinesley', '0'],
-['Áncash', 'Asunción', 'Acochaca', '57533597', 'Eddie Hinesley', '1'],
-['Áncash', 'Asunción', 'Acochaca', '86777322', 'Aundrea Grace', '1'],
-['Áncash', 'Asunción', 'Acochaca', '23017965', 'Aundrea Grace', '1']
-]
-print(c.calcularganador(datatest))
+data=c.calcularvotosporcandidato(c.leerdatos())
+print(c.calculaganador(data))
+
